@@ -8,30 +8,28 @@ jobs:
     steps:
       - name: Install cowsay
         run: sudo apt-get install cowsay
+
       - name: Run cowsay
         run: cowsay "Hello, world!"
-      - name: Run cowsay
+
+      - name: Run cowsay with reza
         run: cowsay "hi reza" >> $GITHUB_STEP_SUMMARY
 
-      - name: Add summary
+      - name: Install Node.js
         run: |
-          const core = require('@actions/core');
-          const generateTestResults = () => {
-            return `
-            foo.js: Pass ✅
-            bar.js: Fail ❌
-            test.js: Pass ✅
-            `;
-          };
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm
 
-          await core.summary
-            .addHeading('Test Results')
-            .addCodeBlock(generateTestResults(), "js")
-            .addTable([
-              [{data: 'File', header: true}, {data: 'Result', header: true}],
-              ['foo.js', 'Pass ✅'],
-              ['bar.js', 'Fail ❌'],
-              ['test.js', 'Pass ✅']
-            ])
-            .addLink('View staging deployment!', 'https://github.com')
-            .write();
+      - name: Add summary using JavaScript
+        run: |
+          echo "const core = require('@actions/core');" > summary.js
+          echo "const generateTestResults = () => {" >> summary.js
+          echo "  return 'foo.js: Pass ✅\\nbar.js: Fail ❌\\ntest.js: Pass ✅';" >> summary.js
+          echo "};" >> summary.js
+          echo "core.summary" >> summary.js
+          echo "  .addHeading('Test Results')" >> summary.js
+          echo "  .addCodeBlock(generateTestResults(), 'js')" >> summary.js
+          echo "  .addTable([['File', 'Result'], ['foo.js', 'Pass ✅'], ['bar.js', 'Fail ❌'], ['test.js', 'Pass ✅']])" >> summary.js
+          echo "  .addLink('View staging deployment!', 'https://github.com')" >> summary.js
+          echo "  .write();" >> summary.js
+          node summary.js

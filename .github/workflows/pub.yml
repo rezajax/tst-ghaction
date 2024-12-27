@@ -1,0 +1,14 @@
+name: pub
+
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cowsay
+        run: sudo apt-get install cowsay
+      - name: Run cowsay
+        run: cowsay "Hello, world!"
+      - name: Run cowsay
+        run: cowsay "hi reza" >> $GITHUB_STEP_SUMMARY

@@ -12,3 +12,26 @@ jobs:
         run: cowsay "Hello, world!"
       - name: Run cowsay
         run: cowsay "hi reza" >> $GITHUB_STEP_SUMMARY
+
+      - name: Add summary
+        run: |
+          const core = require('@actions/core');
+          const generateTestResults = () => {
+            return `
+            foo.js: Pass ✅
+            bar.js: Fail ❌
+            test.js: Pass ✅
+            `;
+          };
+
+          await core.summary
+            .addHeading('Test Results')
+            .addCodeBlock(generateTestResults(), "js")
+            .addTable([
+              [{data: 'File', header: true}, {data: 'Result', header: true}],
+              ['foo.js', 'Pass ✅'],
+              ['bar.js', 'Fail ❌'],
+              ['test.js', 'Pass ✅']
+            ])
+            .addLink('View staging deployment!', 'https://github.com')
+            .write();
